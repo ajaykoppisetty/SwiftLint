@@ -6,6 +6,8 @@
 //  Copyright © 2016 Realm. All rights reserved.
 //
 
+// swiftlint:disable file_length
+
 import SourceKittenFramework
 @testable import SwiftLintFramework
 import XCTest
@@ -276,9 +278,277 @@ class RuleConfigurationsTests: XCTestCase {
     }
 }
 
+// MARK: - ImportsConfiguration tests
+
+extension RuleConfigurationsTests {
+
+    func testImportsConfigurationSetsCorrectly() {
+        let data: [String: Any] = [
+            "ignore_case": true,
+            "ignore_duplicated": true,
+            "ignore_order": true,
+            "ignore_position": true
+        ]
+
+        var config1 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        let config2 = ImportsConfiguration(
+            ignoreCase: true,
+            ignoreDuplicatedImports: true,
+            ignoreImportsOrder: true,
+            ignoreImportsPosition: true
+        )
+
+        do {
+            try config1.apply(configuration: data)
+            XCTAssertEqual(config1, config2)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+    }
+
+    func testImportsConfigurationThrowsOnBadConfig() {
+        var config1 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        checkError(ConfigurationError.unknownConfiguration) {
+            try config1.apply(configuration: [true, true])
+        }
+    }
+
+    func testImportsConfigurationIgnoreCase() {
+        let config1 = ImportsConfiguration(
+            ignoreCase: true,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        XCTAssertEqual(config1.ignoreCase, true)
+
+        let config2 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        XCTAssertEqual(config2.ignoreCase, false)
+
+        var config3 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        do {
+            try config3.apply(configuration: ["ignore_case": true])
+            XCTAssertEqual(config3.ignoreCase, true)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+
+        var config4 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: true,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        do {
+            try config4.apply(configuration: ["ignore_case": false])
+            XCTAssertEqual(config4.ignoreCase, false)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+    }
+
+    func testImportsConfigurationIgnoreDuplicated() {
+        let config1 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: true,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        XCTAssertEqual(config1.ignoreDuplicatedImports, true)
+
+        let config2 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        XCTAssertEqual(config2.ignoreDuplicatedImports, false)
+
+        var config3 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        do {
+            try config3.apply(configuration: ["ignore_duplicated": true])
+            XCTAssertEqual(config3.ignoreDuplicatedImports, true)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+
+        var config4 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: true,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        do {
+            try config4.apply(configuration: ["ignore_duplicated": false])
+            XCTAssertEqual(config4.ignoreDuplicatedImports, false)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+    }
+
+    func testImportsConfigurationIgnoreOrder() {
+        let config1 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: true,
+            ignoreImportsPosition: false
+        )
+        XCTAssertEqual(config1.ignoreImportsOrder, true)
+
+        let config2 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        XCTAssertEqual(config2.ignoreImportsOrder, false)
+
+        var config3 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        do {
+            try config3.apply(configuration: ["ignore_order": true])
+            XCTAssertEqual(config3.ignoreImportsOrder, true)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+
+        var config4 = ImportsConfiguration(
+            ignoreCase: true,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        do {
+            try config4.apply(configuration: ["ignore_order": false])
+            XCTAssertEqual(config4.ignoreImportsOrder, false)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+    }
+
+    func testImportsConfigurationIgnorePosition() {
+        let config1 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: true
+        )
+        XCTAssertEqual(config1.ignoreImportsPosition, true)
+
+        let config2 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        XCTAssertEqual(config2.ignoreImportsPosition, false)
+
+        var config3 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: false
+        )
+        do {
+            try config3.apply(configuration: ["ignore_position": true])
+            XCTAssertEqual(config3.ignoreImportsPosition, true)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+
+        var config4 = ImportsConfiguration(
+            ignoreCase: false,
+            ignoreDuplicatedImports: false,
+            ignoreImportsOrder: false,
+            ignoreImportsPosition: true
+        )
+        do {
+            try config4.apply(configuration: ["ignore_order": false])
+            XCTAssertEqual(config4.ignoreImportsPosition, false)
+        } catch {
+            XCTFail("Did not configure correctly")
+        }
+    }
+
+    func testImportsConfigurationEquality() {
+        let possibleTests: [(Bool, Bool, Bool, Bool)] = [
+            (false, false, false, false),
+            (false, false, false, true),
+            (false, false, true, false),
+            (false, false, true, true),
+            (false, true, false, false),
+            (false, true, false, true),
+            (false, true, true, false),
+            (false, true, true, true),
+            (true, false, false, false),
+            (true, false, false, true),
+            (true, false, true, false),
+            (true, false, true, true),
+            (true, true, false, false),
+            (true, true, false, true),
+            (true, true, true, false),
+            (true, true, true, true)
+        ]
+
+        possibleTests.enumerated().forEach { index, data in
+            let config1 = ImportsConfiguration(
+                ignoreCase: data.0,
+                ignoreDuplicatedImports: data.1,
+                ignoreImportsOrder: data.2,
+                ignoreImportsPosition: data.3
+            )
+            let config2 = ImportsConfiguration(
+                ignoreCase: data.0,
+                ignoreDuplicatedImports: data.1,
+                ignoreImportsOrder: data.2,
+                ignoreImportsPosition: data.3
+            )
+            XCTAssertEqual(config1, config2, "Failed imports configuration equality test data #\(index)")
+        }
+    }
+
+}
+
 extension RuleConfigurationsTests {
     static var allTests: [(String, (RuleConfigurationsTests) -> () throws -> Void)] {
         return [
+            ("testImportsConfigurationSetsCorrectly",
+             testImportsConfigurationSetsCorrectly),
+            ("testImportsConfigurationThrowsOnBadConfig",
+             testImportsConfigurationThrowsOnBadConfig),
+            ("testImportsConfigurationIgnoreOrder",
+             testImportsConfigurationIgnoreOrder),
+            ("testImportsConfigurationIgnorePosition",
+             testImportsConfigurationIgnorePosition),
             ("testNameConfigurationSetsCorrectly",
                 testNameConfigurationSetsCorrectly),
             ("testNameConfigurationThrowsOnBadConfig",
@@ -320,3 +590,4 @@ extension RuleConfigurationsTests {
         ]
     }
 }
+// swiftlint:enable file_length
